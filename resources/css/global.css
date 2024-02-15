@@ -1,0 +1,19 @@
+.bg-welcome {
+  background-image: url('/images/1.jpg');
+}
+
+.bg-dashboard {
+  background-image: url('/images/3.jpg');
+}
+
+.bg-deck {
+  background-image: url('/images/4.jpg');
+}
+
+.bg-sandbox {
+  background-image: url('/images/2.jpg');
+}
+
+.bg-news {
+  background-image: url('/images/4.jpg');
+}
