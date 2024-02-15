@@ -65,5 +65,20 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
+## Screen
+### Welcome Page
+![image](https://github.com/seniorprodev/MTG-Deck-Laravel-Inertia-React-TypeScript/assets/108979490/67c252ae-5840-4270-ac84-1354c296b706)
+
+### All Decks Page
+![image](https://github.com/seniorprodev/MTG-Deck-Laravel-Inertia-React-TypeScript/assets/108979490/7c996358-a226-4577-9964-a3057bf7c78e)
+
+### Deck Sandbox Page
+![image](https://github.com/seniorprodev/MTG-Deck-Laravel-Inertia-React-TypeScript/assets/108979490/1db32636-fe89-494d-a05e-cbb3406c2f70)
+![image](https://github.com/seniorprodev/MTG-Deck-Laravel-Inertia-React-TypeScript/assets/108979490/6b531cec-54d7-4a57-9be7-26fa2f7a4680)
+
+### Cards List Page
+![image](https://github.com/seniorprodev/MTG-Deck-Laravel-Inertia-React-TypeScript/assets/108979490/1fb494e8-f0f1-4ca6-81b2-3f32461da951)
+
+
 ## Feature Task
-1. Create Card Detail Page
+- Create Card Detail Page
