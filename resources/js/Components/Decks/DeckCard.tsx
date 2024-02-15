@@ -1,8 +1,6 @@
 import React from "react";
 import { Deck } from "@/types";
 import { Link } from "@inertiajs/react";
-import { DiCssdeck } from "react-icons/di";
-
 interface DeckCardProps {
     deck: Deck;
 }
