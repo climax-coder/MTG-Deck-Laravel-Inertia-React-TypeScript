@@ -5,7 +5,6 @@ import { usePage, useForm } from "@inertiajs/react";
 import CardImageWithActions from "@/Components/Cards/CardImageWithActions";
 import DangerButton from "@/Components/Common/DangerButton";
 import BackgroundImage from "@/Components/Common/BackgroundImage";
-
 interface Props {
     deck: Deck;
 }
@@ -41,9 +40,9 @@ const DeckDetail: React.FC<Props> = ({ deck }) => {
                 </div>
                 <div className="w-[300px] mx-auto p-5 bg-indigo-100 rounded-lg mt-10 md:mt-0">
                     <h1 className="text-3xl font-bold mb-4 uppercase">
-                        {deck?.name}
+                        {deck.name}
                     </h1>
-                    <p className="text-gray-600 mb-2">{deck?.description}</p>
+                    <p className="text-gray-600 mb-2">{deck.description}</p>
                     <div className="flex items-center mb-4">
                         <p className="text-gray-700 mr-4">
                             Average CMC:{" "}
@@ -53,7 +52,7 @@ const DeckDetail: React.FC<Props> = ({ deck }) => {
                         </p>
                         <p className="text-gray-700">
                             Cards Count:{" "}
-                            <span className="font-semibold">{deck?.count}</span>
+                            <span className="font-semibold">{deck.count}</span>
                         </p>
                     </div>
                     {enabled && (

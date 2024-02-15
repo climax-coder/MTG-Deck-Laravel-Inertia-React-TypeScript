@@ -5,6 +5,8 @@ import NavLink from "@/Components/Common/NavLink";
 import ResponsiveNavLink from "@/Components/Common/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
 import { PageProps } from "@/types";
+import { FaBox, FaFlask, FaNewspaper, FaSearch } from "react-icons/fa";
+import { BiSolidCube } from "react-icons/bi";
 
 interface NavbarProps {
     auth: PageProps["auth"];
@@ -47,17 +49,32 @@ const Navbar: React.FC<NavbarProps> = ({ auth }) => {
                                         <Dropdown.Link
                                             href={route("decks.all")}
                                         >
-                                            All Decks
+                                            <div className="flex">
+                                                <FaSearch />
+                                                <span className="px-3">
+                                                    All Decks
+                                                </span>
+                                            </div>
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route("decks.sandbox")}
                                         >
-                                            Deck Sandbox
+                                            <div className="flex">
+                                                <FaFlask />
+                                                <span className="px-3">
+                                                    Deck Sandbox
+                                                </span>
+                                            </div>
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route("decks.index")}
                                         >
-                                            My Decks
+                                            <div className="flex">
+                                                <FaBox />
+                                                <span className="px-3">
+                                                    My Decks
+                                                </span>
+                                            </div>
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -199,35 +216,36 @@ const Navbar: React.FC<NavbarProps> = ({ auth }) => {
                         onClick={() => setShowingNavigationDropdown(false)}
                         active={route().current("decks.all")}
                     >
-                        All Decks
+                        <FaSearch className="mt-1 mr-3" /> All Decks
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
                         href={route("decks.sandbox")}
                         onClick={() => setShowingNavigationDropdown(false)}
                         active={route().current("decks.sandbox")}
                     >
-                        Deck Sandbox
+                        <FaFlask className="mt-1 mr-3" /> Sandbox
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
                         href={route("decks.index")}
                         onClick={() => setShowingNavigationDropdown(false)}
                         active={route().current("decks.index")}
                     >
-                        My Decks
+                        <FaBox className="mt-1 mr-3" /> My Decks
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
                         href={route("cards")}
                         onClick={() => setShowingNavigationDropdown(false)}
                         active={route().current("cards")}
                     >
-                        Cards
+                        <BiSolidCube className="mt-1 mr-3" />
+                        All card packages
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
                         href={route("news")}
                         onClick={() => setShowingNavigationDropdown(false)}
                         active={route().current("news")}
                     >
-                        News
+                        <FaNewspaper className="mt-1 mr-3" /> News
                     </ResponsiveNavLink>
                 </div>
             </div>
