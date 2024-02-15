@@ -4,7 +4,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Deck\DeckStoreRequest;
+use App\Http\Requests\DeckRequest;
 use App\Models\Deck;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,7 +42,7 @@ class DeckController extends Controller
         ]);
     }
 
-    public function store(DeckStoreRequest $request) : RedirectResponse {
+    public function store(DeckRequest $request) : RedirectResponse {
         DB::beginTransaction();
 
         try {
@@ -62,33 +62,22 @@ class DeckController extends Controller
 
     public function show(Deck $deck): Response
     {
-
         return Inertia::render('Decks/DeckDetail', [
             'deck' => $deck->toArray()
         ]);
     }
 
-    public function edit(Request $request): Response
+    public function edit(Deck $deck): Response
     {
-        $id = $request->route('id');
-        $deck = Deck::find($id);
-        // $decodeDeck['id'] = $deck['id'];
-        // $decodeDeck['name'] = $deck['name'];
-        // $decodeDeck['description'] = $deck['description'];
-        // $decodeDeck['cards'] = json_decode($deck['cards']);
-        // $decodeDeck['imageId'] = $deck['imageId'];
-        // $decodeDeck['avgCmc'] = $deck['avgCmc'];
-        // $decodeDeck['count'] = $deck['count'];
-        // $decodeDeck['user_id'] = $deck['user_id'];
         
-        return Inertia::render('Decks/UpdateDeckPage', [
+        return Inertia::render('Decks/UpdateDeck', [
             'deck' => $deck->toArray()
         ]);
     }
 
-    public function update(DeckStoreRequest $request, Deck $deck) : RedirectResponse
+    public function update(DeckRequest $request, Deck $deck) : RedirectResponse
     {
-        if (Gate::denies('update-deck', $deck)) {
+        if (Gate::denies('update-or-delete-deck', $deck)) {
             abort(403, 'Unauthorized');
         }
 
@@ -110,7 +99,7 @@ class DeckController extends Controller
 
     public function destroy(Deck $deck) : RedirectResponse
     {
-        if (Gate::denies('delete-deck', $deck)) {
+        if (Gate::denies('update-or-delete-deck', $deck)) {
             abort(403, 'Unauthorized');
         }
 

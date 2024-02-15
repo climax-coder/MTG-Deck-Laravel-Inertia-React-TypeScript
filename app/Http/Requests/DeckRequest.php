@@ -1,12 +1,11 @@
 <?php
 
-// DeckStoreRequest.php
-
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Deck;
 
-class DeckStoreRequest extends FormRequest
+class DeckRequest extends FormRequest
 {
     public function authorize()
     {
