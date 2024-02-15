@@ -50,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ auth }) => {
                                             href={route("decks.all")}
                                         >
                                             <div className="flex">
-                                                <FaSearch />
+                                                <FaSearch className="my-auto" />
                                                 <span className="px-3">
                                                     All Decks
                                                 </span>
@@ -60,7 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({ auth }) => {
                                             href={route("decks.sandbox")}
                                         >
                                             <div className="flex">
-                                                <FaFlask />
+                                                <FaFlask className="my-auto" />
                                                 <span className="px-3">
                                                     Deck Sandbox
                                                 </span>
@@ -70,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ auth }) => {
                                             href={route("decks.index")}
                                         >
                                             <div className="flex">
-                                                <FaBox />
+                                                <FaBox className="my-auto" />
                                                 <span className="px-3">
                                                     My Decks
                                                 </span>
