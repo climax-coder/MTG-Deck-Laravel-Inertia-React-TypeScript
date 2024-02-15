@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Models\Deck;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,11 +17,13 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+    $decks = Deck::orderByDesc('updated_at')->take(5)->get();
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'decks' => $decks,
     ]);
 });
 
@@ -29,10 +31,31 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+// Cards route
+Route::get('/cards', function () {
+    return Inertia::render('Cards/Index');
+})->name('cards');
+
+// News route
+Route::get('/news', function () {
+    return Inertia::render('News/Index');
+})->name('news');
+
+// Decks route
+Route::get('/decks/all', [DeckController::class, 'allDecks'])->name('decks.all');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/decks/sandbox', function() {
+        return Inertia::render('Decks/Sandbox');
+    })->name('decks.sandbox');
+    Route::get('/decks/sandbox/{id}', [DeckController::class, 'edit'])->name('deck.edit');
+    Route::resource('decks', DeckController::class);
 });
+
+Route::get('/decks/{id}', [DeckController::class, 'show'])->name('deck.show');
 
 require __DIR__.'/auth.php';
