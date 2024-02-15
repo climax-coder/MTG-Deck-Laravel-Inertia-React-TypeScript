@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\DeckController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Deck;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,20 +44,22 @@ Route::get('/news', function () {
     return Inertia::render('News/Index');
 })->name('news');
 
-// Decks route
-Route::get('/decks/all', [DeckController::class, 'allDecks'])->name('decks.all');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/decks/all', [DeckController::class, 'allDecks'])->name('decks.all');
+
+Route::middleware('auth')->group(function () {
     Route::get('/decks/sandbox', function() {
         return Inertia::render('Decks/Sandbox');
     })->name('decks.sandbox');
-    Route::get('/decks/sandbox/{id}', [DeckController::class, 'edit'])->name('deck.edit');
+    Route::get('/decks/sandbox/{deck}', [DeckController::class, 'edit'])->name('deck.edit');
     Route::resource('decks', DeckController::class);
 });
 
-Route::get('/decks/{id}', [DeckController::class, 'show'])->name('deck.show');
+Route::get('/decks/{deck}', [DeckController::class, 'show'])->name('deck.show');
 
 require __DIR__.'/auth.php';

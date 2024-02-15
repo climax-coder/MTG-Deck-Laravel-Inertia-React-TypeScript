@@ -4,6 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Deck;
 use App\Policies\DeckPolicy;
 
@@ -26,5 +27,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         //
         $this->registerPolicies();
+
+        Gate::define('update-or-delete-deck', function ($user, $deck) {
+            // Authorization logic here
+            return $user->id === $deck->user_id; // Example logic: Only the owner can update the deck
+        });
     }
 }
