@@ -17,12 +17,17 @@ use Inertia\Response;
 
 class DeckController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $decks = Auth::user()->decks()->orderByDesc('updated_at')->get();
-        
+        $name = $request->query('name');
+        $decks = Auth::user()->decks();
+        if ($name) {
+            $decks->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($name) . '%']);
+        }  
+        $filteredDecks = $decks->orderByDesc('updated_at')->get();
         return Inertia::render('Decks/Index', [
-            'decks' => $decks
+            'name' => '',
+            'decks' => $filteredDecks,
         ]);
     }
 
@@ -31,14 +36,15 @@ class DeckController extends Controller
         $name = $request->query('name');
         $decks = Deck::query();
 
-        if($name) {
-            $decks->where('name', $name);
-        }
+        if ($name) {
+            $decks->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($name) . '%']);
+        }        
 
         $filteredDecks = $decks->orderByDesc('updated_at')->get();
 
         return Inertia::render('Decks/Index', [
-            'decks' => $filteredDecks
+            'name' => $name,
+            'decks' => $filteredDecks,
         ]);
     }
 
@@ -70,7 +76,7 @@ class DeckController extends Controller
     public function edit(Deck $deck): Response
     {
         
-        return Inertia::render('Decks/UpdateDeck', [
+        return Inertia::render('Decks/Sandbox', [
             'deck' => $deck->toArray()
         ]);
     }

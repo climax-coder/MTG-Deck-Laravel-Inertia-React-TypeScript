@@ -2,13 +2,11 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import { Deck, Card, DeckCard } from "@/types";
 import PrimaryButton from "../Common/PrimaryButton";
 import IconInput from "../Common/IconInput";
-import InputError from "../Common/InputError";
 import { FaSearch } from "react-icons/fa";
 import { AppContext } from "@/Context/AppContext";
 import { compareDecks } from "@/Utils/Index";
 import { useForm } from "@inertiajs/react";
 import DeckInput from "./DeckInput";
-import Image from "../Common/Image";
 import CardImageWithActions from "../Cards/CardImageWithActions";
 import EmptyCard from "../Common/EmptyCard";
 
@@ -182,14 +180,6 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
         <div className="relative">
             <form onSubmit={handleSubmit}>
                 <div className="sm:grid sm:grid-cols-2 gap-4">
-                    {/* <Image
-                        imageUrl={
-                            data.imageId
-                                ? `../../images/decks/${data?.imageId}.jpg`
-                                : ""
-                        }
-                        alt={data.name}
-                    /> */}
                     <div className="mx-auto mt-5 bg-gray-200 w-[250px] h-[200px] border border-dashed border-gray-800 rounded-lg">
                         {data.imageId !== null ? (
                             <img
@@ -223,7 +213,7 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                     <label className="text-xl font-bold">
                         All Selected Cards
                     </label>
-                    <div className="flex flex-wrap flex-start items-center overflow-auto h-[350px] mt-5 p-5 gap-20 bg-gray-200 rounded-md">
+                    <div className="flex flex-wrap justify-around sm:justify-start items-center overflow-auto h-[350px] mt-5 p-5 gap-20 bg-gray-200 rounded-md">
                         {data?.cards && data.cards.length > 0 ? (
                             data.cards.map((_card: DeckCard) => (
                                 <CardImageWithActions
@@ -233,13 +223,16 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                                     handleRemoveCard={handleRemoveCard}
                                     handleSetDeckImageId={handleSetDeckImageId}
                                     count={_card.count}
+                                    checked={
+                                        _card.multiverseid === data.imageId
+                                    }
                                 />
                             ))
                         ) : (
                             <div className="flex flex-start items-center p-3 w-full h-full bg-gray-200">
                                 <EmptyCard
                                     message="No card"
-                                    classNames="w-[223px] h-[310px]"
+                                    classNames="mx-auto w-[223px] h-[310px]"
                                 />
                             </div>
                         )}
@@ -247,7 +240,7 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                 </div>
                 <div className="m-5 flex justify-center">
                     <PrimaryButton
-                        className="ms-4 text-xl"
+                        className="text-xl w-[300px] h-[50px] flex justify-center"
                         type="submit"
                         disabled={disabled}
                     >
@@ -258,14 +251,14 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                 </div>
             </form>
             <div>
-                <div className="flex justify-center p-5">
+                <div className="flex justify-center py-5">
                     <IconInput
                         icon={FaSearch}
                         placeholder="Search cards..."
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex flex-wrap overflow-auto h-[350px] mt-5 p-5 gap-20">
+                <div className="flex flex-wrap justify-around sm:justify-start bg-gray-200 overflow-auto h-[600px] mt-5 p-5 gap-20">
                     {filteredCards.map((_card) => (
                         <CardImageWithActions
                             key={_card.id}

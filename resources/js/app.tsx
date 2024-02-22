@@ -37,9 +37,6 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        const renderWithLayout = (page: React.ReactNode) => (
-            <MainLayout>{page}</MainLayout>
-        );
         root.render(
             <AppProvider>
                 <App {...props} />

@@ -1,4 +1,4 @@
-import { Link, Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { Deck, PageProps } from "@/types";
 import IconInput from "@/Components/Common/IconInput";
 import { FaSearch } from "react-icons/fa";
@@ -6,20 +6,11 @@ import DeckList from "@/Components/Decks/DeckList";
 import EmptyCard from "@/Components/Common/EmptyCard";
 import BackgroundImage from "@/Components/Common/BackgroundImage";
 
-export default function Welcome({
-    auth,
-    laravelVersion,
-    phpVersion,
-    decks,
-}: PageProps<{ laravelVersion: string; phpVersion: string; decks: Deck[] }>) {
+export default function Welcome({ decks }: PageProps<{ decks: Deck[] }>) {
     const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             const searchQuery = e.currentTarget.value.trim();
-            if (searchQuery) {
-                window.location.href = route("decks.all", {
-                    name: searchQuery,
-                });
-            }
+            router.visit(route("decks.all", { name: searchQuery }));
         }
     };
 

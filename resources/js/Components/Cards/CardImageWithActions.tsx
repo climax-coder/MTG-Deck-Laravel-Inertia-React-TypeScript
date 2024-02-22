@@ -8,6 +8,7 @@ interface Props {
     handleRemoveCard?: (id: string) => void;
     handleSetDeckImageId?: (id: string) => void;
     count?: number;
+    checked?: boolean;
 }
 
 const CardImageWithActions: React.FC<Props> = ({
@@ -16,6 +17,7 @@ const CardImageWithActions: React.FC<Props> = ({
     handleAddCard,
     handleRemoveCard,
     count,
+    checked = false,
 }) => {
     return (
         <div className="relative w-[223px] h-[310px]">
@@ -48,7 +50,11 @@ const CardImageWithActions: React.FC<Props> = ({
                 )}
                 {handleSetDeckImageId && (
                     <div
-                        className="flex justify-center items-center rounded-full text-green-500 border border-amber-800 w-10 h-10 bg bg-gray-100"
+                        className={`flex justify-center items-center rounded-full border border-amber-800 w-10 h-10 ${
+                            checked
+                                ? "text-white bg-green-500"
+                                : "text-green-500 bg-gray-100"
+                        }`}
                         onClick={() => handleSetDeckImageId(card.id)}
                     >
                         <FaCheck />
