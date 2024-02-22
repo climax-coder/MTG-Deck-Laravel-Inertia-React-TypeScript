@@ -229,18 +229,18 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                                 />
                             ))
                         ) : (
-                            <div className="flex flex-start items-center p-3 w-full h-full bg-gray-200">
+                            <div className="flex flex-start items-center justify-center sm:justify-start p-3 w-full h-full bg-gray-200">
                                 <EmptyCard
                                     message="No card"
-                                    classNames="mx-auto w-[223px] h-[310px]"
+                                    classNames="w-[223px] h-[310px]"
                                 />
                             </div>
                         )}
                     </div>
                 </div>
-                <div className="m-5 flex justify-center">
+                <div className="my-10 flex justify-center">
                     <PrimaryButton
-                        className="text-xl w-[300px] h-[50px] flex justify-center"
+                        className="w-[100%] sm:w-[300px] h-[50px] flex justify-center"
                         type="submit"
                         disabled={disabled}
                     >
