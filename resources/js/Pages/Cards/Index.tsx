@@ -37,7 +37,10 @@ export default function Index() {
             {filteredCards.length > 0 ? (
                 <CardList cards={filteredCards} />
             ) : (
-                <EmptyCard message="No Card" classNames="w-[223px] h-[310px]" />
+                <EmptyCard
+                    message="No Card"
+                    classNames="m-auto w-[223px] h-[310px]"
+                />
             )}
         </div>
     );

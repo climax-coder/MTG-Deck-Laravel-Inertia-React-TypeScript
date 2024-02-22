@@ -2,13 +2,11 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import { Deck, Card, DeckCard } from "@/types";
 import PrimaryButton from "../Common/PrimaryButton";
 import IconInput from "../Common/IconInput";
-import InputError from "../Common/InputError";
 import { FaSearch } from "react-icons/fa";
 import { AppContext } from "@/Context/AppContext";
 import { compareDecks } from "@/Utils/Index";
 import { useForm } from "@inertiajs/react";
 import DeckInput from "./DeckInput";
-import Image from "../Common/Image";
 import CardImageWithActions from "../Cards/CardImageWithActions";
 import EmptyCard from "../Common/EmptyCard";
 
@@ -18,13 +16,14 @@ interface EditDeckProps {
 
 const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
     const { data, setData, post, put } = useForm<Deck>({
-        name: deck.name || "",
-        description: deck.description || "",
-        imageId: deck.imageId || null,
-        cards: deck.cards ? JSON.parse(JSON.stringify(deck.cards)) : [],
-        count: deck.count || 0,
-        avgCmc: deck.avgCmc || 0,
+        name: deck.name,
+        description: deck.description,
+        imageId: deck.imageId,
+        cards: JSON.parse(JSON.stringify(deck.cards)),
+        count: deck.count,
+        avgCmc: deck.avgCmc,
     });
+
     const [filteredCards, setFilteredCards] = useState<Card[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -41,32 +40,13 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
 
     useEffect(() => {
         const isValid = validateForm();
-
-        const newDeck: Deck = {
-            name: data.name,
-            description: data.description,
-            cards: data.cards,
-            imageId: data.imageId,
-            count: data.count,
-            avgCmc: data.avgCmc,
-        };
-        const isSameAsInitial = compareDecks(newDeck, deck);
+        const isSameAsInitial = compareDecks(data, deck);
         setDisabled(!isValid || isSameAsInitial);
     }, [data]);
 
-    const handleNameChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            setData((prevData) => ({ ...prevData, name: e.target.value }));
-        },
-        [setData]
-    );
-
-    const handleDescriptionChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            setData((prevData) => ({
-                ...prevData,
-                description: e.target.value,
-            }));
+    const handleChange = useCallback(
+        (field: string, value: any) => {
+            setData((prevData) => ({ ...prevData, [field]: value }));
         },
         [setData]
     );
@@ -115,18 +95,21 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                         sumCmc += existingCard.cmc;
                     }
                 } else {
-                    const cardIndex = cards.findIndex((c) => c.id === cardId);
+                    const cardToAdd = cards.find((c) => c.id === cardId);
+                    if (!cardToAdd) {
+                        return { ...prevData };
+                    }
                     prevData.cards.push({
-                        name: cards[cardIndex].name,
-                        id: cards[cardIndex].id,
-                        imageUrl: cards[cardIndex].imageUrl,
+                        name: cardToAdd.name,
+                        id: cardToAdd.id,
+                        imageUrl: cardToAdd.imageUrl,
                         count: 1,
-                        multiverseid: cards[cardIndex].multiverseid,
-                        cmc: cards[cardIndex].cmc,
-                        type: cards[cardIndex].type,
+                        multiverseid: cardToAdd.multiverseid,
+                        cmc: cardToAdd.cmc,
+                        type: cardToAdd.type,
                     });
-                    if (cards[cardIndex].type !== "Land") {
-                        sumCmc += cards[cardIndex].cmc;
+                    if (cardToAdd.type !== "Land") {
+                        sumCmc += cardToAdd.cmc;
                     }
                 }
                 prevData.count++;
@@ -182,14 +165,6 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
         <div className="relative">
             <form onSubmit={handleSubmit}>
                 <div className="sm:grid sm:grid-cols-2 gap-4">
-                    {/* <Image
-                        imageUrl={
-                            data.imageId
-                                ? `../../images/decks/${data?.imageId}.jpg`
-                                : ""
-                        }
-                        alt={data.name}
-                    /> */}
                     <div className="mx-auto mt-5 bg-gray-200 w-[250px] h-[200px] border border-dashed border-gray-800 rounded-lg">
                         {data.imageId !== null ? (
                             <img
@@ -208,13 +183,17 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                         <DeckInput
                             label="Deck Name"
                             value={data?.name}
-                            onChange={handleNameChange}
+                            onChange={(e) =>
+                                handleChange("name", e.target.value)
+                            }
                             error={errors.name}
                         />
                         <DeckInput
                             label="Deck Description"
                             value={data?.description}
-                            onChange={handleDescriptionChange}
+                            onChange={(e) =>
+                                handleChange("description", e.target.value)
+                            }
                             error={errors.description}
                         />
                     </div>
@@ -223,7 +202,7 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                     <label className="text-xl font-bold">
                         All Selected Cards
                     </label>
-                    <div className="flex flex-wrap flex-start items-center overflow-auto h-[350px] mt-5 p-5 gap-20 bg-gray-200 rounded-md">
+                    <div className="flex flex-wrap justify-around sm:justify-start items-center overflow-auto h-[350px] mt-5 p-5 gap-20 bg-gray-200 rounded-md">
                         {data?.cards && data.cards.length > 0 ? (
                             data.cards.map((_card: DeckCard) => (
                                 <CardImageWithActions
@@ -233,10 +212,13 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                                     handleRemoveCard={handleRemoveCard}
                                     handleSetDeckImageId={handleSetDeckImageId}
                                     count={_card.count}
+                                    checked={
+                                        _card.multiverseid === data.imageId
+                                    }
                                 />
                             ))
                         ) : (
-                            <div className="flex flex-start items-center p-3 w-full h-full bg-gray-200">
+                            <div className="flex flex-start items-center justify-center sm:justify-start p-3 w-full h-full bg-gray-200">
                                 <EmptyCard
                                     message="No card"
                                     classNames="w-[223px] h-[310px]"
@@ -245,9 +227,9 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                         )}
                     </div>
                 </div>
-                <div className="m-5 flex justify-center">
+                <div className="my-10 flex justify-center">
                     <PrimaryButton
-                        className="ms-4 text-xl"
+                        className="w-[100%] sm:w-[300px] h-[50px] flex justify-center"
                         type="submit"
                         disabled={disabled}
                     >
@@ -258,14 +240,14 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                 </div>
             </form>
             <div>
-                <div className="flex justify-center p-5">
+                <div className="flex justify-center py-5">
                     <IconInput
                         icon={FaSearch}
                         placeholder="Search cards..."
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex flex-wrap overflow-auto h-[350px] mt-5 p-5 gap-20">
+                <div className="flex flex-wrap justify-around sm:justify-start bg-gray-200 overflow-auto h-[600px] mt-5 p-5 gap-20">
                     {filteredCards.map((_card) => (
                         <CardImageWithActions
                             key={_card.id}
