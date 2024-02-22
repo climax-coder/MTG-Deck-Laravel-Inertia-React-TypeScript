@@ -40,7 +40,7 @@ const CardImageWithActions: React.FC<Props> = ({
                         {count}
                     </div>
                 )}
-                {handleRemoveCard && (
+                {count && handleRemoveCard && (
                     <div
                         className="flex justify-center items-center rounded-full text-amber-800 border border-amber-800 w-10 h-10 bg bg-gray-100"
                         onClick={() => handleRemoveCard(card.id)}

@@ -16,13 +16,14 @@ interface EditDeckProps {
 
 const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
     const { data, setData, post, put } = useForm<Deck>({
-        name: deck.name || "",
-        description: deck.description || "",
-        imageId: deck.imageId || null,
-        cards: deck.cards ? JSON.parse(JSON.stringify(deck.cards)) : [],
-        count: deck.count || 0,
-        avgCmc: deck.avgCmc || 0,
+        name: deck.name,
+        description: deck.description,
+        imageId: deck.imageId,
+        cards: JSON.parse(JSON.stringify(deck.cards)),
+        count: deck.count,
+        avgCmc: deck.avgCmc,
     });
+
     const [filteredCards, setFilteredCards] = useState<Card[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -39,32 +40,13 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
 
     useEffect(() => {
         const isValid = validateForm();
-
-        const newDeck: Deck = {
-            name: data.name,
-            description: data.description,
-            cards: data.cards,
-            imageId: data.imageId,
-            count: data.count,
-            avgCmc: data.avgCmc,
-        };
-        const isSameAsInitial = compareDecks(newDeck, deck);
+        const isSameAsInitial = compareDecks(data, deck);
         setDisabled(!isValid || isSameAsInitial);
     }, [data]);
 
-    const handleNameChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            setData((prevData) => ({ ...prevData, name: e.target.value }));
-        },
-        [setData]
-    );
-
-    const handleDescriptionChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            setData((prevData) => ({
-                ...prevData,
-                description: e.target.value,
-            }));
+    const handleChange = useCallback(
+        (field: string, value: any) => {
+            setData((prevData) => ({ ...prevData, [field]: value }));
         },
         [setData]
     );
@@ -113,18 +95,21 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                         sumCmc += existingCard.cmc;
                     }
                 } else {
-                    const cardIndex = cards.findIndex((c) => c.id === cardId);
+                    const cardToAdd = cards.find((c) => c.id === cardId);
+                    if (!cardToAdd) {
+                        return { ...prevData };
+                    }
                     prevData.cards.push({
-                        name: cards[cardIndex].name,
-                        id: cards[cardIndex].id,
-                        imageUrl: cards[cardIndex].imageUrl,
+                        name: cardToAdd.name,
+                        id: cardToAdd.id,
+                        imageUrl: cardToAdd.imageUrl,
                         count: 1,
-                        multiverseid: cards[cardIndex].multiverseid,
-                        cmc: cards[cardIndex].cmc,
-                        type: cards[cardIndex].type,
+                        multiverseid: cardToAdd.multiverseid,
+                        cmc: cardToAdd.cmc,
+                        type: cardToAdd.type,
                     });
-                    if (cards[cardIndex].type !== "Land") {
-                        sumCmc += cards[cardIndex].cmc;
+                    if (cardToAdd.type !== "Land") {
+                        sumCmc += cardToAdd.cmc;
                     }
                 }
                 prevData.count++;
@@ -198,13 +183,17 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                         <DeckInput
                             label="Deck Name"
                             value={data?.name}
-                            onChange={handleNameChange}
+                            onChange={(e) =>
+                                handleChange("name", e.target.value)
+                            }
                             error={errors.name}
                         />
                         <DeckInput
                             label="Deck Description"
                             value={data?.description}
-                            onChange={handleDescriptionChange}
+                            onChange={(e) =>
+                                handleChange("description", e.target.value)
+                            }
                             error={errors.description}
                         />
                     </div>
