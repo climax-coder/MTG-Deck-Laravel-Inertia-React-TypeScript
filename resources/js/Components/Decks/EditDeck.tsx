@@ -67,10 +67,10 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
             setError("imageId", "Please select a deck image.");
             isValid = false;
         }
-        if (data.count < 20 || data.count > 30) {
+        if (data.count === 0 || data.count > 30) {
             setError(
                 "cards",
-                "Please select between 20 and 30 cards for the deck."
+                "Please select at least 1 and maximum 30 cards for the deck."
             );
             isValid = false;
         }
@@ -182,7 +182,7 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                             />
                         ) : (
                             <EmptyCard
-                                message="Please send a deck image"
+                                message="Please select a deck image"
                                 classNames="w-[250px] h-[200px]"
                             />
                         )}

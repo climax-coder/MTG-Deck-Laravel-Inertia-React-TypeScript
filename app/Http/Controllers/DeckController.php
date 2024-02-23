@@ -26,7 +26,7 @@ class DeckController extends Controller
         }  
         $filteredDecks = $decks->orderByDesc('updated_at')->get();
         return Inertia::render('Decks/Index', [
-            'name' => '',
+            'name' => $name,
             'decks' => $filteredDecks,
         ]);
     }
