@@ -9,24 +9,25 @@ import { useForm } from "@inertiajs/react";
 import DeckInput from "./DeckInput";
 import CardImageWithActions from "../Cards/CardImageWithActions";
 import EmptyCard from "../Common/EmptyCard";
+import InputError from "../Common/InputError";
 
 interface EditDeckProps {
     deck: Deck;
 }
 
 const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
-    const { data, setData, post, put } = useForm<Deck>({
-        name: deck.name,
-        description: deck.description,
-        imageId: deck.imageId,
-        cards: JSON.parse(JSON.stringify(deck.cards)),
-        count: deck.count,
-        avgCmc: deck.avgCmc,
-    });
+    const { data, setData, post, put, errors, setError, clearErrors } =
+        useForm<Deck>({
+            name: deck.name,
+            description: deck.description,
+            imageId: deck.imageId,
+            cards: JSON.parse(JSON.stringify(deck.cards)),
+            count: deck.count,
+            avgCmc: deck.avgCmc,
+        });
 
     const [filteredCards, setFilteredCards] = useState<Card[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [disabled, setDisabled] = useState(true);
 
     const cards: Card[] = useContext(AppContext);
@@ -52,34 +53,38 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
     );
 
     const validateForm = useCallback(() => {
-        const newErrors: { [key: string]: string } = {};
+        clearErrors();
+        let isValid = true;
         if (!data.name) {
-            newErrors.name = "Please enter a deck name.";
+            setError("name", "Please enter a deck name.");
+            isValid = false;
         }
         if (!data.description) {
-            newErrors.description = "Please enter a deck description.";
+            setError("description", "Please enter a deck description.");
+            isValid = false;
         }
-        if (!data.imageId) {
-            newErrors.imageId = "Please select a deck image";
+        if (data.imageId === null) {
+            setError("imageId", "Please select a deck image.");
+            isValid = false;
         }
         if (data.count < 20 || data.count > 30) {
-            newErrors.cards =
-                "Please select at least 20 and maximum 30 cards for the deck.";
+            setError(
+                "cards",
+                "Please select between 20 and 30 cards for the deck."
+            );
+            isValid = false;
         }
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }, [data]);
+        return isValid;
+    }, [data, setError, clearErrors]);
 
     const handleSubmit = useCallback(
         (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            if (deck.name !== "" && deck.description !== "") {
-                put(route("decks.update", { id: deck.id }));
-            } else {
-                post(route("decks.store"));
-            }
+            deck.id
+                ? put(route("decks.update", { id: deck.id }))
+                : post(route("decks.store"));
         },
-        [deck, post, data]
+        [deck, post, put]
     );
 
     const handleAddCard = useCallback(
@@ -117,7 +122,7 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                 return { ...prevData };
             });
         },
-        [setData]
+        [setData, cards]
     );
 
     const handleRemoveCard = useCallback(
@@ -132,6 +137,9 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                         card.count--;
                     } else {
                         prevData.cards.splice(cardIndex, 1);
+                        if (card.multiverseid === prevData.imageId) {
+                            prevData.imageId = null;
+                        }
                     }
                     prevData.count--;
                     if (card.type !== "Land") {
@@ -174,7 +182,7 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                             />
                         ) : (
                             <EmptyCard
-                                message="No deck image"
+                                message="Please send a deck image"
                                 classNames="w-[250px] h-[200px]"
                             />
                         )}
@@ -218,11 +226,8 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                                 />
                             ))
                         ) : (
-                            <div className="flex flex-start items-center justify-center sm:justify-start p-3 w-full h-full bg-gray-200">
-                                <EmptyCard
-                                    message="No card"
-                                    classNames="w-[223px] h-[310px]"
-                                />
+                            <div className="flex flex-start items-center justify-center p-3 w-full h-full bg-gray-200">
+                                <InputError message={errors.cards} />
                             </div>
                         )}
                     </div>
@@ -247,20 +252,27 @@ const EditDeck: React.FC<EditDeckProps> = ({ deck }) => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex flex-wrap justify-around sm:justify-start bg-gray-200 overflow-auto h-[600px] mt-5 p-5 gap-20">
-                    {filteredCards.map((_card) => (
-                        <CardImageWithActions
-                            key={_card.id}
-                            card={_card}
-                            handleAddCard={handleAddCard}
-                            handleRemoveCard={handleRemoveCard}
-                            count={
-                                data.cards.find(
-                                    (c: DeckCard) => c.id === _card.id
-                                )?.count
-                            }
+                <div className="flex flex-wrap justify-around sm:justify-start bg-gray-200 overflow-auto max-h-[600px] mt-5 p-5 gap-20 rounded-md">
+                    {filteredCards.length > 0 ? (
+                        filteredCards.map((_card) => (
+                            <CardImageWithActions
+                                key={_card.id}
+                                card={_card}
+                                handleAddCard={handleAddCard}
+                                handleRemoveCard={handleRemoveCard}
+                                count={
+                                    data.cards.find(
+                                        (c: DeckCard) => c.id === _card.id
+                                    )?.count
+                                }
+                            />
+                        ))
+                    ) : (
+                        <EmptyCard
+                            message="No Card"
+                            classNames="w-[223px] h-[310px]"
                         />
-                    ))}
+                    )}
                 </div>
             </div>
         </div>
